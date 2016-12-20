@@ -11,7 +11,7 @@ var getActionData = function getActionData(func, args) {
   return typeof func === 'function' ? func.apply(undefined, _toConsumableArray(args)) : defaultArg;
 };
 
-var createStateActionFunc = function createStateActionFunc(actionType, fetchActionCreator, metaCreator) {
+var createStateActionFunc = function createStateActionFunc(actionType, payloadCreator, metaCreator) {
   return function () {
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
@@ -20,14 +20,14 @@ var createStateActionFunc = function createStateActionFunc(actionType, fetchActi
     return function (dispatch, getState) {
       return dispatch({
         type: actionType,
-        payload: getActionData(fetchActionCreator, [{ dispatch: dispatch, getState: getState }].concat(args)),
+        payload: getActionData(payloadCreator, [{ dispatch: dispatch, getState: getState }].concat(args)),
         meta: getActionData(metaCreator, args)
       });
     };
   };
 };
 
-var createActionFunc = function createActionFunc(actionType, fetchActionCreator, metaCreator) {
+var createActionFunc = function createActionFunc(actionType, payloadCreator, metaCreator) {
   return function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
@@ -35,16 +35,16 @@ var createActionFunc = function createActionFunc(actionType, fetchActionCreator,
 
     return {
       type: actionType,
-      payload: getActionData(fetchActionCreator, args),
+      payload: getActionData(payloadCreator, args),
       meta: getActionData(metaCreator, args)
     };
   };
 };
 
 var functionCreator = function functionCreator(func) {
-  return function (actionName, actionCreator, metaCreator) {
+  return function (actionName, payloadCreator, metaCreator) {
     var creator = function creator() {
-      return func(actionName, actionCreator, metaCreator).apply(undefined, arguments);
+      return func(actionName, payloadCreator, metaCreator).apply(undefined, arguments);
     };
     creator.toString = function () {
       return actionName;
@@ -53,10 +53,10 @@ var functionCreator = function functionCreator(func) {
   };
 };
 
-var createAction = exports.createAction = function createAction(actionName, actionCreator, metaCreator) {
-  return functionCreator(createActionFunc)(actionName, actionCreator, metaCreator);
+var createAction = exports.createAction = function createAction(actionName, payloadCreator, metaCreator) {
+  return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator);
 };
 
-var createActionWithState = exports.createActionWithState = function createActionWithState(actionName, actionCreator, metaCreator) {
-  return functionCreator(createStateActionFunc)(actionName, actionCreator, metaCreator);
+var createActionWithState = exports.createActionWithState = function createActionWithState(actionName, payloadCreator, metaCreator) {
+  return functionCreator(createStateActionFunc)(actionName, payloadCreator, metaCreator);
 };

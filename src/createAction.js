@@ -3,32 +3,32 @@ const getActionData = (func, args) => {
   return typeof func === 'function' ? func(...args) : defaultArg
 }
 
-const createStateActionFunc = (actionType, fetchActionCreator, metaCreator) =>
+const createStateActionFunc = (actionType, payloadCreator, metaCreator) =>
   (...args) => (dispatch, getState) => dispatch({
     type: actionType,
-    payload: getActionData(fetchActionCreator, [{ dispatch, getState }].concat(args)),
+    payload: getActionData(payloadCreator, [{ dispatch, getState }].concat(args)),
     meta: getActionData(metaCreator, args),
   })
 
-const createActionFunc = (actionType, fetchActionCreator, metaCreator) =>
+const createActionFunc = (actionType, payloadCreator, metaCreator) =>
   (...args) => ({
     type: actionType,
-    payload: getActionData(fetchActionCreator, args),
+    payload: getActionData(payloadCreator, args),
     meta: getActionData(metaCreator, args),
   })
 
-const functionCreator = (func) => (actionName, actionCreator, metaCreator) => {
+const functionCreator = (func) => (actionName, payloadCreator, metaCreator) => {
   const creator = (...args) => func(
-    actionName, actionCreator, metaCreator
+    actionName, payloadCreator, metaCreator
   )(...args)
   creator.toString = () => actionName
   return creator;
 }
 
-export const createAction = (actionName, actionCreator, metaCreator) => {
-  return functionCreator(createActionFunc)(actionName, actionCreator, metaCreator)
+export const createAction = (actionName, payloadCreator, metaCreator) => {
+  return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator)
 };
 
-export const createActionWithState = (actionName, actionCreator, metaCreator) => {
-  return functionCreator(createStateActionFunc)(actionName, actionCreator, metaCreator)
+export const createActionWithState = (actionName, payloadCreator, metaCreator) => {
+  return functionCreator(createStateActionFunc)(actionName, payloadCreator, metaCreator)
 };
