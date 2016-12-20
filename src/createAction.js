@@ -3,13 +3,6 @@ const getActionData = (func, args) => {
   return typeof func === 'function' ? func(...args) : defaultArg
 }
 
-const createStateActionFunc = (actionType, payloadCreator, metaCreator) =>
-  (...args) => (dispatch, getState) => dispatch({
-    type: actionType,
-    payload: getActionData(payloadCreator, [{ dispatch, getState }].concat(args)),
-    meta: getActionData(metaCreator, args),
-  })
-
 const createActionFunc = (actionType, payloadCreator, metaCreator) =>
   (...args) => ({
     type: actionType,
@@ -29,6 +22,13 @@ export const createAction = (actionName, payloadCreator, metaCreator) => {
   return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator)
 };
 
-export const createActionWithState = (actionName, payloadCreator, metaCreator) => {
-  return functionCreator(createStateActionFunc)(actionName, payloadCreator, metaCreator)
+const createThunkActionFunc = (actionType, payloadCreator, metaCreator) =>
+  (...args) => (dispatch, getState) => dispatch({
+    type: actionType,
+    payload: getActionData(payloadCreator, [{ dispatch, getState }].concat(args)),
+    meta: getActionData(metaCreator, args),
+  })
+
+export const createThunkAction = (actionName, payloadCreator, metaCreator) => {
+  return functionCreator(createThunkActionFunc)(actionName, payloadCreator, metaCreator)
 };

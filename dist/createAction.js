@@ -11,26 +11,10 @@ var getActionData = function getActionData(func, args) {
   return typeof func === 'function' ? func.apply(undefined, _toConsumableArray(args)) : defaultArg;
 };
 
-var createStateActionFunc = function createStateActionFunc(actionType, payloadCreator, metaCreator) {
+var createActionFunc = function createActionFunc(actionType, payloadCreator, metaCreator) {
   return function () {
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
-    }
-
-    return function (dispatch, getState) {
-      return dispatch({
-        type: actionType,
-        payload: getActionData(payloadCreator, [{ dispatch: dispatch, getState: getState }].concat(args)),
-        meta: getActionData(metaCreator, args)
-      });
-    };
-  };
-};
-
-var createActionFunc = function createActionFunc(actionType, payloadCreator, metaCreator) {
-  return function () {
-    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
     }
 
     return {
@@ -57,6 +41,22 @@ var createAction = exports.createAction = function createAction(actionName, payl
   return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator);
 };
 
-var createActionWithState = exports.createActionWithState = function createActionWithState(actionName, payloadCreator, metaCreator) {
-  return functionCreator(createStateActionFunc)(actionName, payloadCreator, metaCreator);
+var createThunkActionFunc = function createThunkActionFunc(actionType, payloadCreator, metaCreator) {
+  return function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    return function (dispatch, getState) {
+      return dispatch({
+        type: actionType,
+        payload: getActionData(payloadCreator, [{ dispatch: dispatch, getState: getState }].concat(args)),
+        meta: getActionData(metaCreator, args)
+      });
+    };
+  };
+};
+
+var createThunkAction = exports.createThunkAction = function createThunkAction(actionName, payloadCreator, metaCreator) {
+  return functionCreator(createThunkActionFunc)(actionName, payloadCreator, metaCreator);
 };

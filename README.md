@@ -86,43 +86,6 @@ export default handleActions((on) => {
 ```
 
 
-### createActionWithState
-```js
-createActionWithState(
-  actionsName: string,
-  payloadCreator: ({ dispatch, getState }, args) => payload,
-  metaCreator: (args) => meta,
-)
-```
-
-```js
-//  actions/todo.js
-import { createActionWithState } from 'redux-actions-helper';
-
-export const updateTODO = createActionWithState(
-  'UPDATE_TODO', ({ dispatch, getState }, task)=>{
-    const state = getState()
-    return {
-      id: task.id,
-      task,
-      operator: state.user.id
-    }
-  }
-);
-```
-use it as same as createAction 
-
-```js
-//  app/Home.js
-
-this.props.updateTODO({
-  id: 1,
-  title: 'new'
-})
-```
-
-
-
 ### async
 
 add promise-middleware to middlewares
@@ -183,4 +146,42 @@ export default handleActions((on) => {
       }
   })
 }, initState)
+```
+
+
+### createThunkAction
+if you use thunk middleware, you can use `createThunkAction`
+
+```js
+createThunkAction(
+  actionsName: string,
+  payloadCreator: ({ dispatch, getState }, args) => payload,
+  metaCreator: (args) => meta,
+)
+```
+
+```js
+//  actions/todo.js
+import { createThunkAction } from 'redux-actions-helper';
+
+export const updateTODO = createThunkAction(
+  'UPDATE_TODO', ({ dispatch, getState }, task)=>{
+    const state = getState()
+    return {
+      id: task.id,
+      task,
+      operator: state.user.id
+    }
+  }
+);
+```
+use it as same as createAction 
+
+```js
+//  app/Home.js
+
+this.props.updateTODO({
+  id: 1,
+  title: 'new'
+})
 ```

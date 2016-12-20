@@ -24,16 +24,12 @@ describe('createAction', () => {
     ).toEqual(
       { task : [{ text:'hello', completed: false }] }
     );
-
     expect(
       reducer({ task : [{ text:'hello', completed: false }] }, completeAaction(0))
     ).toEqual(
       { task : [{ text:'hello', completed: true }] }
     );
-
   });
-
-
 
   it('payload creator should correct', () => {
     const addAction = createAction('ADD_TODO',(text) =>{
@@ -52,7 +48,6 @@ describe('createAction', () => {
         return state
       })
     }, { task : [] });
-
     expect(
       reducer({ task : [] }, addAction('hello'))
     ).toEqual(
@@ -85,6 +80,5 @@ describe('createAction', () => {
     }, { task : [] });
     reducer({ task : [] }, addAction('hello'))
   });
-
 
 })

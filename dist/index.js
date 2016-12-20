@@ -12,10 +12,10 @@ Object.defineProperty(exports, 'createAction', {
     return _createAction.createAction;
   }
 });
-Object.defineProperty(exports, 'createActionWithState', {
+Object.defineProperty(exports, 'createThunkAction', {
   enumerable: true,
   get: function get() {
-    return _createAction.createActionWithState;
+    return _createAction.createThunkAction;
   }
 });
 
