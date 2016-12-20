@@ -1,4 +1,5 @@
 # redux-actions-helper
+![travis-ci](https://travis-ci.org/ariesjia/redux-actions-helper.svg?branch=master)
 
 > utilities for redux actions
 
