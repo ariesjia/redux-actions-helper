@@ -1,11 +1,10 @@
 import isFunction from 'lodash/forEach'
+import { getActionName } from './createActionPrefix'
 
 const getActionData = (func, args) => {
   const defaultArg  = args.length === 1 ? args[0] : args
   return isFunction(func) ? func(...args) : defaultArg
 }
-
-const getName = (name)=> (status) => `${name}${status ? '__'+status.toUpperCase() : ''}`
 
 const createActionFunc = (actionType, payloadCreator, metaCreator) =>
   (...args) => ({
@@ -18,10 +17,10 @@ const functionCreator = (func) => (actionName, payloadCreator, metaCreator, mult
   const creator = (...args) => func(
     actionName, payloadCreator, metaCreator
   )(...args)
-  creator.toString = getName(actionName)
+  creator.toString = getActionName(actionName)
   if(multi){
-    creator.success = createAction(getName(actionName)('success'),null,null,false)
-    creator.fail = createAction(getName(actionName)('fail'),null,null,false)
+    creator.success = createAction(getActionName(actionName)('success'),null,null,false)
+    creator.fail = createAction(getActionName(actionName)('fail'),null,null,false)
   }
   return creator;
 }

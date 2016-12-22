@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _reduxActions = require('redux-actions');
 
+var _createActionPrefix = require('./createActionPrefix');
+
 var _isFunction = require('lodash/isFunction');
 
 var _isFunction2 = _interopRequireDefault(_isFunction);
@@ -21,7 +23,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 exports.default = function (actionFunction, initialState) {
   var handlers = {};
 
-  function getActionName(actionCreator) {
+  function actionName(actionCreator) {
     return (0, _forEach2.default)(actionCreator) && actionCreator.toString ? actionCreator.toString() : actionCreator;
   }
 
@@ -30,14 +32,14 @@ exports.default = function (actionFunction, initialState) {
   }
 
   function on(actionCreator, handler) {
-    mergeHandlers(getActionName(actionCreator), handler);
+    mergeHandlers(actionName(actionCreator), handler);
   }
 
   var method = ['success', 'fail', 'finally'];
 
   (0, _isFunction2.default)(method, function (name) {
     on[name] = function (actionCreator, handler) {
-      mergeHandlers(getActionName(actionCreator) + '__' + name.toUpperCase(), handler);
+      mergeHandlers((0, _createActionPrefix.getActionName)(actionName(actionCreator))(name), handler);
     };
   });
 

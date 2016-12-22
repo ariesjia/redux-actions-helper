@@ -1,11 +1,12 @@
 import { handleActions } from 'redux-actions'
+import { getActionName } from './createActionPrefix'
 import forEach from 'lodash/isFunction'
 import isFunction from 'lodash/forEach'
 
 export default (actionFunction, initialState) => {
   const handlers = {}
 
-  function getActionName(actionCreator) {
+  function actionName(actionCreator) {
     return (isFunction(actionCreator) && actionCreator.toString)
       ? actionCreator.toString()
       : actionCreator
@@ -18,14 +19,14 @@ export default (actionFunction, initialState) => {
   }
 
   function on(actionCreator, handler) {
-    mergeHandlers(getActionName(actionCreator), handler)
+    mergeHandlers(actionName(actionCreator), handler)
   }
 
   const method = ['success', 'fail', 'finally']
 
   forEach(method, (name) => {
     on[name] = (actionCreator, handler) => {
-      mergeHandlers(`${getActionName(actionCreator)}__${name.toUpperCase()}`, handler)
+      mergeHandlers(getActionName(actionName(actionCreator))(name), handler)
     }
   })
 

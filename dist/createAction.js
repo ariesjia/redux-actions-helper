@@ -9,6 +9,8 @@ var _forEach = require('lodash/forEach');
 
 var _forEach2 = _interopRequireDefault(_forEach);
 
+var _createActionPrefix = require('./createActionPrefix');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -16,12 +18,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var getActionData = function getActionData(func, args) {
   var defaultArg = args.length === 1 ? args[0] : args;
   return (0, _forEach2.default)(func) ? func.apply(undefined, _toConsumableArray(args)) : defaultArg;
-};
-
-var getName = function getName(name) {
-  return function (status) {
-    return '' + name + (status ? '__' + status.toUpperCase() : '');
-  };
 };
 
 var createActionFunc = function createActionFunc(actionType, payloadCreator, metaCreator) {
@@ -43,10 +39,10 @@ var functionCreator = function functionCreator(func) {
     var creator = function creator() {
       return func(actionName, payloadCreator, metaCreator).apply(undefined, arguments);
     };
-    creator.toString = getName(actionName);
+    creator.toString = (0, _createActionPrefix.getActionName)(actionName);
     if (multi) {
-      creator.success = createAction(getName(actionName)('success'), null, null, false);
-      creator.fail = createAction(getName(actionName)('fail'), null, null, false);
+      creator.success = createAction((0, _createActionPrefix.getActionName)(actionName)('success'), null, null, false);
+      creator.fail = createAction((0, _createActionPrefix.getActionName)(actionName)('fail'), null, null, false);
     }
     return creator;
   };

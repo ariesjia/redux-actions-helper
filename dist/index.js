@@ -45,6 +45,12 @@ Object.defineProperty(exports, 'createActionPrefix', {
     return _interopRequireDefault(_createActionPrefix).default;
   }
 });
+Object.defineProperty(exports, 'setSplitter', {
+  enumerable: true,
+  get: function get() {
+    return _createActionPrefix.setSplitter;
+  }
+});
 
 var _promiseMiddleware = require('./promise-middleware');
 
