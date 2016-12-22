@@ -2,7 +2,7 @@ import isFunction from 'lodash/forEach'
 import { getActionName } from './createActionPrefix'
 
 const getActionData = (func, args) => {
-  const defaultArg  = args.length === 1 ? args[0] : args
+  const defaultArg  = args.length <= 1  ? args[0] : args
   return isFunction(func) ? func(...args) : defaultArg
 }
 

@@ -1,6 +1,6 @@
 import { createAction, handleActions } from '../src'
 
-describe('createAction', () => {
+describe('handleActions', () => {
   it('create action should pass arguments to payload correct', () => {
     const addAction = createAction('ADD_TODO')
     const completeAaction = createAction('REMOVE_TODO')
