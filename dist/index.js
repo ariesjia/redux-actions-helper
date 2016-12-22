@@ -4,6 +4,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _reduxActions = require('redux-actions');
+
+Object.defineProperty(exports, 'handleActions', {
+  enumerable: true,
+  get: function get() {
+    return _reduxActions.handleActions;
+  }
+});
+
 var _createAction = require('./createAction');
 
 Object.defineProperty(exports, 'createAction', {
@@ -19,12 +28,12 @@ Object.defineProperty(exports, 'createThunkAction', {
   }
 });
 
-var _handleActions = require('./handleActions');
+var _listenActions = require('./listenActions');
 
-Object.defineProperty(exports, 'handleActions', {
+Object.defineProperty(exports, 'listenActions', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(_handleActions).default;
+    return _interopRequireDefault(_listenActions).default;
   }
 });
 

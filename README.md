@@ -59,18 +59,17 @@ this.props.updateTODO({
 ```
 
 
-### handleActions
-
+### listenActions
 ```js
 //  reducer/todo.js
-import { handleActions } from 'redux-actions-helper';
+import { listenActions, handleActions } from 'redux-actions-helper';
 import * as todoActions from '../../actions/todo'
 
 const initState = {
   tasks: []
 }
 
-export default handleActions((on) => {
+export default listenActions((on) => {
   on(todoActions.toggleTODO, (state, action) => {
     const taskId = action.payload
     return {
@@ -84,6 +83,24 @@ export default handleActions((on) => {
     }
   })
 }, initState)
+
+// ==== you also can use handleActions , is same
+
+handleActions({
+  [todoActions.toggleTODO]:(state, action) => {
+    const taskId = action.payload
+    return {
+     ...
+    }
+  },
+  [todoActions.updateTODO]:(state, action) => {
+    const {id, task} = action.payload
+    return {
+     ...
+    }
+  }
+}, initState)
+
 ```
 
 
@@ -115,14 +132,42 @@ export const updateTODO = createAction(
 
 ```js
 //  reducer/todo.js
-import { handleActions } from 'redux-actions-helper';
+import { listenActions } from 'redux-actions-helper';
 import * as todoActions from '../../actions/todo'
 
 const initState = {
   tasks: []
 }
 
-export default handleActions((on) => {
+//handleActions 
+handleActions({
+  [todoActions.updateTODO]:(state, action) => {
+    // api start
+    const requestArgumens = action.payload[0] // task
+    return {
+      ...
+    }
+  },
+  [todoActions.updateTODO.success]:(state, action) => {
+    // promise resolve
+    const response = action.payload
+    const requestArgumens = action.meta[0] // task
+    return {
+      ...
+    }
+  },
+  [todoActions.updateTODO.fail]:(state, action) => {
+    // promise reject 
+    const error = action.payload
+    const requestArgumens = action.meta[0] // task
+    return {
+      ...
+    }
+  }
+}, initState)
+
+//listenActions 
+export default listenActions((on) => {
   on(todoActions.updateTODO, (state, action) => {
     // api start
     const requestArgumens = action.payload[0] // task
@@ -147,6 +192,7 @@ export default handleActions((on) => {
       }
   })
 }, initState)
+
 ```
 
 

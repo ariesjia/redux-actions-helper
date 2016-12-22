@@ -4,18 +4,18 @@ describe('createAction', () => {
   it('create action should pass arguments to payload correct', () => {
     const addAction = createAction('ADD_TODO')
     const completeAaction = createAction('REMOVE_TODO')
-    const reducer = handleActions((on)=>{
-      on(addAction,(state,action)=>{
+    const reducer = handleActions({
+      [addAction]:(state,action)=>{
         state.task.push({
           ...action.payload,
           completed: false
         })
         return state
-      })
-      on(completeAaction,(state,action)=>{
+      },
+      [completeAaction]: (state,action)=>{
         state.task[action.payload].completed = true
         return state
-      })
+      }
     }, { task : [] });
     expect(
       reducer({ task : [] }, addAction({
@@ -38,15 +38,15 @@ describe('createAction', () => {
           icon: 'todo'
         }
     })
-    const reducer = handleActions((on)=>{
-      on(addAction,(state,action)=>{
+    const reducer = handleActions({
+      [addAction]:(state,action)=>{
         state.task.push({
           ...action.payload,
           completed: false
         })
         expect(action.payload).toEqual({ text:'hello', icon: 'todo'});
         return state
-      })
+      }
     }, { task : [] });
     expect(
       reducer({ task : [] }, addAction('hello'))
@@ -68,15 +68,15 @@ describe('createAction', () => {
         date: now
       }
     })
-    const reducer = handleActions((on)=>{
-      on(addAction,(state,action)=>{
+    const reducer = handleActions({
+      [addAction]: (state,action)=>{
         state.task.push({
           ...action.payload,
           completed: false
         })
         expect(action.meta.date).toEqual(now);
         return state
-      })
+      }
     }, { task : [] });
     reducer({ task : [] }, addAction('hello'))
   });
