@@ -1,5 +1,6 @@
 import { isFSA } from 'flux-standard-action';
 import omit from 'lodash/omit';
+import { getActionName } from './createActionPrefix';
 
 function isPromise(val) {
   return val && typeof val.then === 'function';
@@ -33,7 +34,7 @@ export default ({ dispatch }) => next => (action) => {
       dispatch({
         ...action,
         payload: result,
-        type: `${action.type}__SUCCESS`,
+        type: getActionName(action.type)('success'),
         meta: getMeta(action),
       });
     }).catch((error) => {
@@ -41,7 +42,7 @@ export default ({ dispatch }) => next => (action) => {
         ...action,
         error: true,
         payload: error instanceof Error ? error.message : error,
-        type: `${action.type}__FAIL`,
+        type: getActionName(action.type)('fail'),
         meta: getMeta(action),
       });
     })

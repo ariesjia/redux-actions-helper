@@ -12,6 +12,8 @@ var _omit = require('lodash/omit');
 
 var _omit2 = _interopRequireDefault(_omit);
 
+var _createActionPrefix = require('./createActionPrefix');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function isPromise(val) {
@@ -44,14 +46,14 @@ exports.default = function (_ref) {
         action.payload.then(function (result) {
           dispatch(_extends({}, action, {
             payload: result,
-            type: action.type + '__SUCCESS',
+            type: (0, _createActionPrefix.getActionName)(action.type)('success'),
             meta: getMeta(action)
           }));
         }).catch(function (error) {
           dispatch(_extends({}, action, {
             error: true,
             payload: error instanceof Error ? error.message : error,
-            type: action.type + '__FAIL',
+            type: (0, _createActionPrefix.getActionName)(action.type)('fail'),
             meta: getMeta(action)
           }));
         });

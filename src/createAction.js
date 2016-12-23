@@ -1,4 +1,5 @@
-import isFunction from 'lodash/forEach'
+import isFunction from 'lodash/isFunction'
+import isArray from 'lodash/isArray'
 import { getActionName } from './createActionPrefix'
 
 const getActionData = (func, args) => {
@@ -13,29 +14,44 @@ const createActionFunc = (actionType, payloadCreator, metaCreator) =>
     meta: getActionData(metaCreator, args),
   })
 
+const generateMulti = (obj,multi,func)=>{
+  if(multi && isArray(multi)){
+    return multi.reduce((prev, name)=>{
+      prev[name] = func(name)
+      return prev
+    },obj)
+  }
+}
+
 const functionCreator = (func) => (actionName, payloadCreator, metaCreator, multi) => {
+  const mulitAactions = generateMulti({},multi,(name)=>{
+    return createAction(getActionName(actionName)(name),null,null,false)
+  })
   const creator = (...args) => func(
-    actionName, payloadCreator, metaCreator
+    actionName, payloadCreator, metaCreator, mulitAactions
   )(...args)
   creator.toString = getActionName(actionName)
-  if(multi){
-    creator.success = createAction(getActionName(actionName)('success'),null,null,false)
-    creator.fail = createAction(getActionName(actionName)('fail'),null,null,false)
-  }
+  Object.assign(creator,mulitAactions)
   return creator;
 }
 
-export const createAction = (actionName, payloadCreator, metaCreator, multi = true) => {
-  return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator, multi)
-};
-
-const createThunkActionFunc = (actionType, payloadCreator, metaCreator) =>
+const createThunkActionFunc = (actionType, payloadCreator, metaCreator, mulitAactions) =>
   (...args) => (dispatch, getState) => dispatch({
     type: actionType,
-    payload: getActionData(payloadCreator, [{ dispatch, getState }].concat(args)),
+    payload: getActionData(
+      payloadCreator,
+      [{
+        dispatch,
+        getState,
+        action: mulitAactions
+      }].concat(args)),
     meta: getActionData(metaCreator, args),
   })
 
-export const createThunkAction = (actionName, payloadCreator, metaCreator) => {
-  return functionCreator(createThunkActionFunc)(actionName, payloadCreator, metaCreator)
+export const createAction = (actionName, payloadCreator, metaCreator, multi = ['success','fail']) => {
+  return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator, multi)
+};
+
+export const createThunkAction = (actionName, payloadCreator, metaCreator, multi = ['success','fail']) => {
+  return functionCreator(createThunkActionFunc)(actionName, payloadCreator, metaCreator, multi)
 };

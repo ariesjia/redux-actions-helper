@@ -5,9 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createThunkAction = exports.createAction = undefined;
 
-var _forEach = require('lodash/forEach');
+var _isFunction = require('lodash/isFunction');
 
-var _forEach2 = _interopRequireDefault(_forEach);
+var _isFunction2 = _interopRequireDefault(_isFunction);
+
+var _isArray = require('lodash/isArray');
+
+var _isArray2 = _interopRequireDefault(_isArray);
 
 var _createActionPrefix = require('./createActionPrefix');
 
@@ -17,7 +21,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var getActionData = function getActionData(func, args) {
   var defaultArg = args.length <= 1 ? args[0] : args;
-  return (0, _forEach2.default)(func) ? func.apply(undefined, _toConsumableArray(args)) : defaultArg;
+  return (0, _isFunction2.default)(func) ? func.apply(undefined, _toConsumableArray(args)) : defaultArg;
 };
 
 var createActionFunc = function createActionFunc(actionType, payloadCreator, metaCreator) {
@@ -34,27 +38,30 @@ var createActionFunc = function createActionFunc(actionType, payloadCreator, met
   };
 };
 
+var generateMulti = function generateMulti(obj, multi, func) {
+  if (multi && (0, _isArray2.default)(multi)) {
+    return multi.reduce(function (prev, name) {
+      prev[name] = func(name);
+      return prev;
+    }, obj);
+  }
+};
+
 var functionCreator = function functionCreator(func) {
   return function (actionName, payloadCreator, metaCreator, multi) {
+    var mulitAactions = generateMulti({}, multi, function (name) {
+      return createAction((0, _createActionPrefix.getActionName)(actionName)(name), null, null, false);
+    });
     var creator = function creator() {
-      return func(actionName, payloadCreator, metaCreator).apply(undefined, arguments);
+      return func(actionName, payloadCreator, metaCreator, mulitAactions).apply(undefined, arguments);
     };
     creator.toString = (0, _createActionPrefix.getActionName)(actionName);
-    if (multi) {
-      creator.success = createAction((0, _createActionPrefix.getActionName)(actionName)('success'), null, null, false);
-      creator.fail = createAction((0, _createActionPrefix.getActionName)(actionName)('fail'), null, null, false);
-    }
+    Object.assign(creator, mulitAactions);
     return creator;
   };
 };
 
-var createAction = exports.createAction = function createAction(actionName, payloadCreator, metaCreator) {
-  var multi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-
-  return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator, multi);
-};
-
-var createThunkActionFunc = function createThunkActionFunc(actionType, payloadCreator, metaCreator) {
+var createThunkActionFunc = function createThunkActionFunc(actionType, payloadCreator, metaCreator, mulitAactions) {
   return function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
@@ -63,13 +70,25 @@ var createThunkActionFunc = function createThunkActionFunc(actionType, payloadCr
     return function (dispatch, getState) {
       return dispatch({
         type: actionType,
-        payload: getActionData(payloadCreator, [{ dispatch: dispatch, getState: getState }].concat(args)),
+        payload: getActionData(payloadCreator, [{
+          dispatch: dispatch,
+          getState: getState,
+          action: mulitAactions
+        }].concat(args)),
         meta: getActionData(metaCreator, args)
       });
     };
   };
 };
 
+var createAction = exports.createAction = function createAction(actionName, payloadCreator, metaCreator) {
+  var multi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['success', 'fail'];
+
+  return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator, multi);
+};
+
 var createThunkAction = exports.createThunkAction = function createThunkAction(actionName, payloadCreator, metaCreator) {
-  return functionCreator(createThunkActionFunc)(actionName, payloadCreator, metaCreator);
+  var multi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['success', 'fail'];
+
+  return functionCreator(createThunkActionFunc)(actionName, payloadCreator, metaCreator, multi);
 };
