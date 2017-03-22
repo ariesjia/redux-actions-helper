@@ -142,7 +142,7 @@ const initState = {
 handleActions({
   [todoActions.updateTODO]:(state, action) => {
     // api start
-    const requestArgumens = action.payload[0] // task
+    const requestArgumens = action.payload // task
     return {
       ...
     }
@@ -150,7 +150,7 @@ handleActions({
   [todoActions.updateTODO.success]:(state, action) => {
     // promise resolve
     const response = action.payload
-    const requestArgumens = action.meta[0] // task
+    const requestArgumens = action.meta // task
     return {
       ...
     }
@@ -158,7 +158,7 @@ handleActions({
   [todoActions.updateTODO.fail]:(state, action) => {
     // promise reject 
     const error = action.payload
-    const requestArgumens = action.meta[0] // task
+    const requestArgumens = action.meta // task
     return {
       ...
     }
@@ -169,7 +169,7 @@ handleActions({
 export default listenActions((on) => {
   on(todoActions.updateTODO, (state, action) => {
     // api start
-    const requestArgumens = action.payload[0] // task
+    const requestArgumens = action.payload // task
     return {
       ...
     }
@@ -177,7 +177,7 @@ export default listenActions((on) => {
   on.success(todoActions.updateTODO, (state, action) => {
     // promise resolve
       const response = action.payload
-      const requestArgumens = action.meta[0] // task
+      const requestArgumens = action.meta // task
       return {
         ...
       }
@@ -185,7 +185,7 @@ export default listenActions((on) => {
   on.fail(todoActions.updateTODO, (state, action) => {
     // promise reject 
       const error = action.payload
-      const requestArgumens = action.meta[0] // task
+      const requestArgumens = action.meta // task
       return {
         ...
       }

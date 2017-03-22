@@ -27,8 +27,6 @@ export default ({ dispatch }) => next => (action) => {
     return next(action);
   }
 
-  next(action)
-
   if (isPromise(action.payload)) {
     action.payload.then((result) => {
       dispatch({
@@ -36,7 +34,7 @@ export default ({ dispatch }) => next => (action) => {
         payload: result,
         type: getActionName(action.type)('success'),
         meta: getMeta(action),
-      });
+      })
     }).catch((error) => {
       dispatch({
         ...action,
@@ -44,11 +42,27 @@ export default ({ dispatch }) => next => (action) => {
         payload: error instanceof Error ? error.message : error,
         type: getActionName(action.type)('fail'),
         meta: getMeta(action),
-      });
+      })
+    })
+    next({
+      ...action,
+      meta:{
+        ...action.meta,
+        PROMISE_START: true,
+      },
     })
     return action.payload;
   } else if (isDeferred(action.payload)) {
+    next({
+      ...action,
+      meta:{
+        ...action.meta,
+        PROMISE_START: true,
+      },
+    })
     return action.payload.promise;
+  } else {
+    next(action)
   }
   return null;
 };

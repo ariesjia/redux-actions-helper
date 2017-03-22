@@ -24,18 +24,18 @@ const generateMulti = (obj,multi,func)=>{
 }
 
 const functionCreator = (func) => (actionName, payloadCreator, metaCreator, multi) => {
-  const mulitAactions = generateMulti({},multi,(name)=>{
+  const multiActions = generateMulti({},multi,(name)=>{
     return createAction(getActionName(actionName)(name),null,null,false)
   })
   const creator = (...args) => func(
-    actionName, payloadCreator, metaCreator, mulitAactions
+    actionName, payloadCreator, metaCreator, multiActions
   )(...args)
   creator.toString = getActionName(actionName)
-  Object.assign(creator,mulitAactions)
+  Object.assign(creator,multiActions)
   return creator;
 }
 
-const createThunkActionFunc = (actionType, payloadCreator, metaCreator, mulitAactions) =>
+const createThunkActionFunc = (actionType, payloadCreator, metaCreator, multiAactions) =>
   (...args) => (dispatch, getState) => dispatch({
     type: actionType,
     payload: getActionData(
@@ -43,7 +43,7 @@ const createThunkActionFunc = (actionType, payloadCreator, metaCreator, mulitAac
       [{
         dispatch,
         getState,
-        action: mulitAactions
+        action: multiAactions
       }].concat(args)),
     meta: getActionData(metaCreator, args),
   })
