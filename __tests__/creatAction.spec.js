@@ -2,12 +2,11 @@ import { createAction, handleActions } from '../src'
 
 describe('handleActions', () => {
 
-  it('create action should pass arguments to payload correct', () => {
+  it('should pass arguments when payload creator is null', () => {
     const TEST_ACTION = createAction('TEST')
     const reducer = handleActions({
       [TEST_ACTION]:(state,action)=>{
-        state = action.payload
-        return state
+        return action.payload
       },
     },{});
     expect(
@@ -35,14 +34,13 @@ describe('handleActions', () => {
     );
   });
 
-  it('create actions support multi arguments , is different from redux-actions', () => {
+  it('should support multi arguments, is different from redux-actions', () => {
     const TEST_ACTION = createAction('TEST')
     const reducer = handleActions({
       [TEST_ACTION]:(state,action)=>{
-        state={
+        return {
           ...action.payload,
         }
-        return state
       },
     },{});
 
@@ -52,5 +50,44 @@ describe('handleActions', () => {
       {0:{},1:1,2:2,3:3}
     );
   });
+
+  it('should support payload creator is not function', () => {
+    const payload = {x: 1};
+    const TEST_ACTION = createAction('TEST', payload)
+    const reducer = handleActions({
+      [TEST_ACTION]:(state,action)=>{
+        return {
+          ...action.payload,
+        }
+      },
+    },{});
+    expect(
+      reducer({}, TEST_ACTION())
+    ).toEqual(payload);
+  })
+
+  it('should support meta creator is not function', () => {
+    const payload = {x: 1};
+    const meta = {x: 1};
+    const TEST_ACTION = createAction('TEST', payload, meta)
+    const reducer = handleActions({
+      [TEST_ACTION]:(state,action)=>{
+        return {
+          payload:{
+            ...action.payload
+          },
+          meta:{
+            ...action.meta
+          },
+        }
+      },
+    },{});
+    expect(
+      reducer({}, TEST_ACTION())
+    ).toEqual({
+      payload,
+      meta,
+    });
+  })
 
 })

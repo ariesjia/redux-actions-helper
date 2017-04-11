@@ -4,7 +4,7 @@ import { getActionName } from './createActionPrefix'
 
 const getActionData = (func, args) => {
   const defaultArg  = args.length <= 1  ? args[0] : args
-  return isFunction(func) ? func(...args) : defaultArg
+  return (isFunction(func) ? func(...args) : func) || defaultArg
 }
 
 const createActionFunc = (actionType, payloadCreator, metaCreator) =>

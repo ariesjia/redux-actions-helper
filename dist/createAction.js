@@ -21,7 +21,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var getActionData = function getActionData(func, args) {
   var defaultArg = args.length <= 1 ? args[0] : args;
-  return (0, _isFunction2.default)(func) ? func.apply(undefined, _toConsumableArray(args)) : defaultArg;
+  return ((0, _isFunction2.default)(func) ? func.apply(undefined, _toConsumableArray(args)) : func) || defaultArg;
 };
 
 var createActionFunc = function createActionFunc(actionType, payloadCreator, metaCreator) {
@@ -49,19 +49,19 @@ var generateMulti = function generateMulti(obj, multi, func) {
 
 var functionCreator = function functionCreator(func) {
   return function (actionName, payloadCreator, metaCreator, multi) {
-    var mulitAactions = generateMulti({}, multi, function (name) {
+    var multiActions = generateMulti({}, multi, function (name) {
       return createAction((0, _createActionPrefix.getActionName)(actionName)(name), null, null, false);
     });
     var creator = function creator() {
-      return func(actionName, payloadCreator, metaCreator, mulitAactions).apply(undefined, arguments);
+      return func(actionName, payloadCreator, metaCreator, multiActions).apply(undefined, arguments);
     };
     creator.toString = (0, _createActionPrefix.getActionName)(actionName);
-    Object.assign(creator, mulitAactions);
+    Object.assign(creator, multiActions);
     return creator;
   };
 };
 
-var createThunkActionFunc = function createThunkActionFunc(actionType, payloadCreator, metaCreator, mulitAactions) {
+var createThunkActionFunc = function createThunkActionFunc(actionType, payloadCreator, metaCreator, multiAactions) {
   return function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
@@ -73,7 +73,7 @@ var createThunkActionFunc = function createThunkActionFunc(actionType, payloadCr
         payload: getActionData(payloadCreator, [{
           dispatch: dispatch,
           getState: getState,
-          action: mulitAactions
+          action: multiAactions
         }].concat(args)),
         meta: getActionData(metaCreator, args)
       });

@@ -40,8 +40,6 @@ exports.default = function (_ref) {
         return next(action);
       }
 
-      next(action);
-
       if (isPromise(action.payload)) {
         action.payload.then(function (result) {
           dispatch(_extends({}, action, {
@@ -57,9 +55,21 @@ exports.default = function (_ref) {
             meta: getMeta(action)
           }));
         });
+        next(_extends({}, action, {
+          meta: _extends({}, action.meta, {
+            PROMISE_START: true
+          })
+        }));
         return action.payload;
       } else if (isDeferred(action.payload)) {
+        next(_extends({}, action, {
+          meta: _extends({}, action.meta, {
+            PROMISE_START: true
+          })
+        }));
         return action.payload.promise;
+      } else {
+        next(action);
       }
       return null;
     };
