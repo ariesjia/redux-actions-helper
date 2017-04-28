@@ -90,4 +90,16 @@ describe('handleActions', () => {
     });
   })
 
+  it('should support argument is null', () => {
+    const TEST_ACTION = createAction('TEST')
+    const reducer = handleActions({
+      [TEST_ACTION]:(state,action)=>{
+        return action.payload
+      },
+    },1);
+    expect(
+      reducer({}, TEST_ACTION(null))
+    ).toEqual(null);
+  })
+
 })
