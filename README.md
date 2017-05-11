@@ -222,6 +222,7 @@ export const updateTODO = createThunkAction(
 );
 ```
 use it as same as createAction 
+createThunkAction will auto create 'pending, success, fail' action.
 
 ```js
 //  app/Home.js

@@ -13,6 +13,14 @@ var _isArray = require('lodash/isArray');
 
 var _isArray2 = _interopRequireDefault(_isArray);
 
+var _isUndefined = require('lodash/isUndefined');
+
+var _isUndefined2 = _interopRequireDefault(_isUndefined);
+
+var _split = require('lodash/split');
+
+var _split2 = _interopRequireDefault(_split);
+
 var _createActionPrefix = require('./createActionPrefix');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -24,24 +32,19 @@ var getActionData = function getActionData(func, args) {
   return ((0, _isFunction2.default)(func) ? func.apply(undefined, _toConsumableArray(args)) : func) || defaultArg;
 };
 
-var createActionFunc = function createActionFunc(actionType, payloadCreator, metaCreator) {
-  return function () {
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    return {
-      type: actionType,
-      payload: getActionData(payloadCreator, args),
-      meta: getActionData(metaCreator, args)
-    };
+var getMultiActionName = function getMultiActionName(name) {
+  var splitName = (0, _split2.default)(name, '|', 2);
+  return {
+    functionName: splitName[0],
+    actionNamePostfix: (0, _isUndefined2.default)(splitName[1]) ? splitName[0] : splitName[1]
   };
 };
 
 var generateMulti = function generateMulti(obj, multi, func) {
   if (multi && (0, _isArray2.default)(multi)) {
     return multi.reduce(function (prev, name) {
-      prev[name] = func(name);
+      var nameConfig = getMultiActionName(name);
+      prev[nameConfig.functionName] = func(nameConfig.actionNamePostfix);
       return prev;
     }, obj);
   }
@@ -58,6 +61,20 @@ var functionCreator = function functionCreator(func) {
     creator.toString = (0, _createActionPrefix.getActionName)(actionName);
     Object.assign(creator, multiActions);
     return creator;
+  };
+};
+
+var createActionFunc = function createActionFunc(actionType, payloadCreator, metaCreator) {
+  return function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return {
+      type: actionType,
+      payload: getActionData(payloadCreator, args),
+      meta: getActionData(metaCreator, args)
+    };
   };
 };
 
@@ -88,7 +105,7 @@ var createAction = exports.createAction = function createAction(actionName, payl
 };
 
 var createThunkAction = exports.createThunkAction = function createThunkAction(actionName, payloadCreator, metaCreator) {
-  var multi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['success', 'fail'];
+  var multi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : ['pending|', 'success', 'fail'];
 
   return functionCreator(createThunkActionFunc)(actionName, payloadCreator, metaCreator, multi);
 };

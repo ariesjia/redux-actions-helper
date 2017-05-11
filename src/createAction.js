@@ -1,5 +1,7 @@
 import isFunction from 'lodash/isFunction'
 import isArray from 'lodash/isArray'
+import isUndefined from 'lodash/isUndefined'
+import split from 'lodash/split'
 import { getActionName } from './createActionPrefix'
 
 const getActionData = (func, args) => {
@@ -7,17 +9,19 @@ const getActionData = (func, args) => {
   return (isFunction(func) ? func(...args) : func) || defaultArg
 }
 
-const createActionFunc = (actionType, payloadCreator, metaCreator) =>
-  (...args) => ({
-    type: actionType,
-    payload: getActionData(payloadCreator, args),
-    meta: getActionData(metaCreator, args),
-  })
+const getMultiActionName = (name) => {
+  const splitName = split(name, '|', 2);
+  return {
+    functionName: splitName[0],
+    actionNamePostfix: isUndefined(splitName[1]) ? splitName[0] : splitName[1],
+  }
+}
 
 const generateMulti = (obj,multi,func)=>{
   if(multi && isArray(multi)){
     return multi.reduce((prev, name)=>{
-      prev[name] = func(name)
+      const nameConfig = getMultiActionName(name);
+      prev[nameConfig.functionName] = func(nameConfig.actionNamePostfix)
       return prev
     },obj)
   }
@@ -34,6 +38,13 @@ const functionCreator = (func) => (actionName, payloadCreator, metaCreator, mult
   Object.assign(creator,multiActions)
   return creator;
 }
+
+const createActionFunc = (actionType, payloadCreator, metaCreator) =>
+  (...args) => ({
+    type: actionType,
+    payload: getActionData(payloadCreator, args),
+    meta: getActionData(metaCreator, args),
+  })
 
 const createThunkActionFunc = (actionType, payloadCreator, metaCreator, multiAactions) =>
   (...args) => (dispatch, getState) => dispatch({
@@ -52,6 +63,6 @@ export const createAction = (actionName, payloadCreator, metaCreator, multi = ['
   return functionCreator(createActionFunc)(actionName, payloadCreator, metaCreator, multi)
 };
 
-export const createThunkAction = (actionName, payloadCreator, metaCreator, multi = ['success','fail']) => {
+export const createThunkAction = (actionName, payloadCreator, metaCreator, multi = ['pending|','success','fail']) => {
   return functionCreator(createThunkActionFunc)(actionName, payloadCreator, metaCreator, multi)
 };
