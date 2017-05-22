@@ -12,6 +12,12 @@ Object.defineProperty(exports, 'handleActions', {
     return _reduxActions.handleActions;
   }
 });
+Object.defineProperty(exports, 'combineActions', {
+  enumerable: true,
+  get: function get() {
+    return _reduxActions.combineActions;
+  }
+});
 
 var _createAction = require('./createAction');
 
