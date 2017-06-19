@@ -51,23 +51,23 @@ export function createAction<Payload, Meta, SuccessPayload, FailPayload>(
   IActionMeta<FailPayload, FailPayload>
 >
 
-export type Reducer<State, Payload> = (state: State, action: IAction<Payload>) => State
+export type Reducer<State> = (state: State, action: IAction<{}>) => State
 
-export interface IReducerNextThrow<State, Payload> {
-  next?(state: State, action: IAction<Payload>): State
-  throw?(state: State, action: IAction<Payload>): State
+export interface IReducerNextThrow<State> {
+  next?(state: State, action: IAction<{}>): State
+  throw?(state: State, action: IAction<{}>): State
 }
 
-export interface IReducerMap<State, Payload> {
-  [actionType: string]: Reducer<State, Payload> | IReducerNextThrow<State, Payload>
+export interface IReducerMap<State> {
+  [actionType: string]: Reducer<State> | IReducerNextThrow<State>
 }
 
-export function handleActions<State, Payload>(
-  reducerMap: IReducerMap<State, Payload>,
+export function handleActions<State>(
+  reducerMap: IReducerMap<State>,
   initialState: State,
-): Reducer<State, Payload>
+): Reducer<State>
 
-export function linstenActions<State, Payload>(
-  reducerMapListener: () => IReducerMap<State, Payload>,
+export function linstenActions<State>(
+  reducerMapListener: () => IReducerMap<State>,
   initialState: State,
-): Reducer<State, Payload>
+): Reducer<State>
