@@ -42,6 +42,11 @@ export const updateTODO = createAction(
     task
   })
 );
+
+// you can get action name by name attribute or toString method
+// toggleTODO.name  is equal 'TOGGLE_TODO'
+// toggleTODO.toString()  is equal 'TOGGLE_TODO'
+
 ```
 
 mapToAction then use it 

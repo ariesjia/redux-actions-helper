@@ -35,6 +35,12 @@ const functionCreator = (func) => (actionName, payloadCreator, metaCreator, mult
     actionName, payloadCreator, metaCreator, multiActions
   )(...args)
   creator.toString = getActionName(actionName)
+  Object.defineProperties(creator, {
+    name: {
+      value: actionName,
+      writable: false,
+    }
+  })
   Object.assign(creator,multiActions)
   return creator;
 }

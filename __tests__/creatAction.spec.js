@@ -2,6 +2,14 @@ import { createAction, handleActions } from '../src'
 
 describe('handleActions', () => {
 
+  it('should get action name by name field', () => {
+    const actionName = 'TEST';
+    const TEST_ACTION = createAction(actionName)
+    expect(
+      TEST_ACTION.name
+    ).toEqual(actionName);
+  });
+
   it('should pass arguments when payload creator is null', () => {
     const TEST_ACTION = createAction('TEST')
     const reducer = handleActions({
