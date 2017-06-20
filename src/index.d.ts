@@ -58,7 +58,7 @@ export interface IReducerNextThrow<State, Payload> {
   throw?(state: State, action: IAction<Payload>): State
 }
 
-export interface IReducerMap<State, Payload> {
+export interface IReducerMap<State, Payload={}> {
   [actionType: string]: Reducer<State, Payload> | IReducerNextThrow<State, Payload>
 }
 
@@ -67,18 +67,7 @@ export function handleActions<State>(
   initialState: State,
 ): Reducer<State, {}>
 
-export function handleActions<State, Payload>(
+export function handleActions<State, Payload={}>(
   reducerMap: IReducerMap<State, Payload>,
-  initialState: State,
-): Reducer<State, Payload>
-
-export function linstenActions<State>(
-  reducerMapListener: () => IReducerMap<State, {}>,
-  initialState: State,
-): Reducer<State, {}>
-
-
-export function linstenActions<State, Payload>(
-  reducerMapListener: () => IReducerMap<State, Payload>,
   initialState: State,
 ): Reducer<State, Payload>
