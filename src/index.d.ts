@@ -62,7 +62,6 @@ export interface IReducerMap<State, Payload> {
   [actionType: string]: Reducer<State, Payload> | IReducerNextThrow<State, Payload>
 }
 
-
 export function handleActions<State, Payload={}>(
   reducerMap: IReducerMap<State, Payload>,
   initialState: State,

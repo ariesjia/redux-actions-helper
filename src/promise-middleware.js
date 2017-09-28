@@ -1,5 +1,8 @@
 import { isFSA } from 'flux-standard-action';
 import omit from 'lodash/omit';
+import isObject from 'lodash/isObject';
+import isUndefined from 'lodash/isUndefined';
+import isNull from 'lodash/isNull';
 import { getActionName } from './createActionPrefix';
 
 function isPromise(val) {
@@ -10,7 +13,7 @@ function isDeferred(val) {
   return val && val.promise && isPromise(val.promise);
 }
 
-function getMeta(action) {
+function getPromiseFinishMeta(action) {
   return (action.meta && action.meta.PROMISE_ACTION)
     ? {
       ...action.meta,
@@ -20,6 +23,25 @@ function getMeta(action) {
       },
     }
     : null;
+}
+
+function getPromiseStartMeta(action) {
+  const originMeta = action.meta
+  let meta
+  if(isUndefined(originMeta) || isNull(originMeta)) {
+    meta = {}
+  } else if (isObject(originMeta)) {
+    meta = originMeta
+  } else {
+    meta = {
+      origin: originMeta
+    }
+  }
+  return Object.assign({} , meta, {
+    PROMISE_ACTION: {
+      PROMISE_START: true,
+    }
+  })
 }
 
 export default ({ dispatch }) => next => (action) => {
@@ -41,24 +63,18 @@ export default ({ dispatch }) => next => (action) => {
         error: true,
         payload: error instanceof Error ? error.message : error,
         type: getActionName(action.type)('fail'),
-        meta: getMeta(action),
+        meta: getPromiseFinishMeta(action),
       })
     })
     next({
       ...action,
-      meta:{
-        ...action.meta,
-        PROMISE_START: true,
-      },
+      meta: getPromiseStartMeta(action),
     })
     return action.payload;
   } else if (isDeferred(action.payload)) {
     next({
       ...action,
-      meta:{
-        ...action.meta,
-        PROMISE_START: true,
-      },
+      meta: getPromiseStartMeta(action),
     })
     return action.payload.promise;
   } else {
