@@ -55,7 +55,7 @@ export default ({ dispatch }) => next => (action) => {
         ...action,
         payload: result,
         type: getActionName(action.type)('success'),
-        meta: getMeta(action),
+        meta: getPromiseFinishMeta(action),
       })
     }).catch((error) => {
       dispatch({

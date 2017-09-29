@@ -57,7 +57,9 @@ function getPromiseStartMeta(action) {
     };
   }
   return Object.assign({}, meta, {
-    PROMISE_START: true
+    PROMISE_ACTION: {
+      PROMISE_START: true
+    }
   });
 }
 
@@ -74,7 +76,7 @@ exports.default = function (_ref) {
           dispatch(_extends({}, action, {
             payload: result,
             type: (0, _createActionPrefix.getActionName)(action.type)('success'),
-            meta: getMeta(action)
+            meta: getPromiseFinishMeta(action)
           }));
         }).catch(function (error) {
           dispatch(_extends({}, action, {
