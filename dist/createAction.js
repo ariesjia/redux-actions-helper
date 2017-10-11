@@ -59,12 +59,7 @@ var functionCreator = function functionCreator(func) {
       return func(actionName, payloadCreator, metaCreator, multiActions).apply(undefined, arguments);
     };
     creator.toString = (0, _createActionPrefix.getActionName)(actionName);
-    Object.defineProperties(creator, {
-      name: {
-        value: actionName,
-        writable: false
-      }
-    });
+    creator.actionName = actionName;
     Object.assign(creator, multiActions);
     return creator;
   };

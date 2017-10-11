@@ -2,11 +2,19 @@ import { createAction, handleActions } from '../src'
 
 describe('handleActions', () => {
 
-  it('should get action name by name field', () => {
+  it('should get action name by actionName field', () => {
     const actionName = 'TEST';
     const TEST_ACTION = createAction(actionName)
     expect(
-      TEST_ACTION.name
+      TEST_ACTION.actionName
+    ).toEqual(actionName);
+  });
+
+  it('should get action name by toString', () => {
+    const actionName = 'TEST';
+    const TEST_ACTION = createAction(actionName)
+    expect(
+      TEST_ACTION.toString()
     ).toEqual(actionName);
   });
 

@@ -44,7 +44,7 @@ export const updateTODO = createAction(
 );
 
 // you can get action name by name attribute or toString method
-// toggleTODO.name  is equal 'TOGGLE_TODO'
+// toggleTODO.actionName  is equal 'TOGGLE_TODO' 
 // toggleTODO.toString()  is equal 'TOGGLE_TODO'
 
 ```
