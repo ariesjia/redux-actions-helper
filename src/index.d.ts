@@ -23,9 +23,9 @@ export interface IActionFunctionMulti<R, T, M>{
  toString: () => string
 }
 
-export function createActionPrefix<Payload>(
-  nameCreator: (namePrefix: string) => string,
-): string
+export function createActionPrefix(
+ prefix?: string
+) : (name: string) => string
 
 export function createAction<Payload>(
   actionType: string,
