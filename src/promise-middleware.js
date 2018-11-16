@@ -37,7 +37,7 @@ function getPromiseStartMeta(action) {
       origin: originMeta
     }
   }
-  return Object.assign({} , meta, {
+  return Object.assign(meta, {
     PROMISE_ACTION: {
       PROMISE_START: true,
     }
