@@ -29,12 +29,12 @@ export function createActionPrefix(
 
 export function createAction<Payload>(
   actionType: string,
-  payloadCreator: (...args: any[]) => Payload,
+  payloadCreator?: (...args: any[]) => Payload,
 ): IActionFunction<IAction<Payload>>
 
 export function createAction<Payload, SuccessPayload, FailPayload>(
   actionType: string,
-  payloadCreator: (...args: any[]) => Payload,
+  payloadCreator?: (...args: any[]) => Payload,
 ): IActionFunctionMulti<
   IAction<Payload>,
   IActionMeta<SuccessPayload, SuccessPayload>,
@@ -43,8 +43,8 @@ export function createAction<Payload, SuccessPayload, FailPayload>(
 
 export function createAction<Payload, Meta, SuccessPayload, FailPayload>(
   actionType: string,
-  payloadCreator: (...args: any[]) => Payload,
-  metaCreator: (...args: any[]) => Meta,
+  payloadCreator?: (...args: any[]) => Payload,
+  metaCreator?: (...args: any[]) => Meta,
 ): IActionFunctionMulti<
   IActionMeta<Payload, Meta>,
   IActionMeta<SuccessPayload, SuccessPayload>,
