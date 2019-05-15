@@ -1,15 +1,15 @@
-export interface IBaseAction {
-  type: string
-}
+import { Reducer, Action } from 'redux'
 
-export interface IAction<Payload> extends IBaseAction {
+export interface IAction<Payload> extends Action {
   payload?: Payload
   error?: boolean
 }
 
-export interface IActionMeta<Payload, Meta> extends IAction<Payload> {
-  meta: Meta
+export interface IActionMeta<Payload, Meta = any> extends IAction<Payload> {
+  meta?: Meta
 }
+
+export type IAnyAction = IActionMeta<any>
 
 export interface IActionFunction<R>{
   (...args: any[]): R
@@ -17,14 +17,14 @@ export interface IActionFunction<R>{
 }
 
 export interface IActionFunctionMulti<R, T, M>{
- (...args: any[]): R
- success: (...args: any[]) => T
- fail: (...args: any[]) => M
- toString: () => string
+  (...args: any[]): R
+  success: (...args: any[]) => T
+  fail: (...args: any[]) => M
+  toString: () => string
 }
 
 export function createActionPrefix(
- prefix?: string
+  prefix?: string
 ) : (name: string) => string
 
 export function createAction<Payload>(
@@ -39,7 +39,7 @@ export function createAction<Payload, SuccessPayload, FailPayload>(
   IAction<Payload>,
   IActionMeta<SuccessPayload, SuccessPayload>,
   IActionMeta<FailPayload, FailPayload>
->
+  >
 
 export function createAction<Payload, Meta, SuccessPayload, FailPayload>(
   actionType: string,
@@ -49,25 +49,24 @@ export function createAction<Payload, Meta, SuccessPayload, FailPayload>(
   IActionMeta<Payload, Meta>,
   IActionMeta<SuccessPayload, SuccessPayload>,
   IActionMeta<FailPayload, FailPayload>
->
+  >
 
-export type Reducer<State, Payload> = (state: State, action: IAction<Payload>) => State
 
-export interface IReducerNextThrow<State, Payload> {
-  next?(state: State, action: IAction<Payload>): State
-  throw?(state: State, action: IAction<Payload>): State
+export interface IReducerNextThrow<State, A extends Action = IAnyAction> {
+  next?(state: State, action: A): State
+  throw?(state: State, action: A): State
 }
 
-export interface IReducerMap<State, Payload> {
-  [actionType: string]: Reducer<State, Payload> | IReducerNextThrow<State, Payload>
+export interface IReducerMap<State, A extends Action = IAnyAction> {
+  [actionType: string]: Reducer<State, A> | IReducerNextThrow<State, A>
 }
 
-export function handleActions<State, Payload={}>(
-  reducerMap: IReducerMap<State, Payload>,
+export function handleActions<State, Payload=any>(
+  reducerMap: IReducerMap<State, IActionMeta<Payload>>,
   initialState: State,
-): Reducer<State, Payload>
+): Reducer<State, IActionMeta<Payload>>
 
-export function linstenActions<State, Payload={}>(
-  reducerMapListener: () => IReducerMap<State, Payload>,
+export function linstenActions<State, Payload=any>(
+  reducerMapListener: () => IReducerMap<State, IActionMeta<Payload>>,
   initialState: State,
-): Reducer<State, Payload>
+): Reducer<State, IActionMeta<Payload>>
